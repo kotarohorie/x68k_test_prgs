@@ -16,6 +16,9 @@
 #include <iocslib.h>
 #include "../lib/XSP/XSP2lib.H"
 
+#define FALSE (0)
+#define TRUE (!0)
+
 /* スプライト PCG パターン最大使用数 */
 #define	PCG_MAX		256
 
@@ -41,6 +44,12 @@ struct {
 
 /* フレームカウント */
 short g_frame_count = 0;
+// タイマーDスレッド実行回数カウンタ
+volatile int g_timerd_cnt = 0;
+// g_timerd_cnt クリア要求
+char g_b_req_timerd_cnt_clr = FALSE;
+// メインスレッド実行回数カウンタ
+int g_main_cnt = 0;
 
 /*----------------------[ 垂直帰線期間割り込み関数に与える引数 ]----------------------*/
 
@@ -194,12 +203,28 @@ void main()
 	/* フレームカウント */
 	g_frame_count = 0;
 
+	B_LOCATE(0, 4);
+	printf("sec TmD MAIN\n");
+
 	timerd_thread_start();
+	int bak_second = TIMEGET() & 0xFF;
 	for (;;)
 	{
+		g_main_cnt++;
 		// [F10]で終了
 		int sns = BITSNS(0xD);
 		if (sns & 0x10) break;
+		int second = TIMEGET() & 0xFF;
+		// RTC の秒が変化したら、表示更新
+		if (bak_second != second)
+		{
+			bak_second = second;
+			B_LOCATE(1, 5);
+			printf("%02X %3d %6d", second, g_timerd_cnt, g_main_cnt);
+			// 表示更新したら g_timerd_cnt, g_main_cnt はリセット
+			g_b_req_timerd_cnt_clr = TRUE;
+			g_main_cnt = 0;
+		}
 	}
 
 	/*-----------------------[ 終了処理 ]-----------------------*/
@@ -224,6 +249,12 @@ void timerd_main(void)
 {
 	for (;;)
 	{
+		if (g_b_req_timerd_cnt_clr)
+		{
+			g_b_req_timerd_cnt_clr = FALSE;
+			g_timerd_cnt = 0;
+		}
+		g_timerd_cnt++;
 		main_frame_run();
 		timerd_thread_sleep();
 	}
