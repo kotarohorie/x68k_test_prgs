@@ -1,0 +1,1173 @@
+		.nlist
+;------------------------------------------------------------------------------
+VECT_43_OPM:			.equ	$10c
+;------------------------------------------------------------------------------
+GR0_VRAM_ADDR:                  .equ    $c00000
+GR1_VRAM_ADDR:                  .equ    $c80000
+GR2_VRAM_ADDR:                  .equ    $d00000
+GR3_VRAM_ADDR:                  .equ    $d80000
+TRAM_ADDR:                      .equ    $e00000
+
+REG_CRTC_R00:	            	.equ	$e80000
+REG_CRTC_R01:	            	.equ	$e80002
+REG_CRTC_R02:	            	.equ	$e80004
+REG_CRTC_R03:	            	.equ	$e80006
+REG_CRTC_R04:	            	.equ	$e80008
+REG_CRTC_R05:	            	.equ	$e8000a
+REG_CRTC_R06:	            	.equ	$e8000c
+REG_CRTC_R07:	            	.equ	$e8000e
+REG_CRTC_R08:	            	.equ	$e80010
+REG_CRTC_R09_RAS:	       	.equ	$e80012
+REG_CRTC_R10_TX_SCRL_X:	  	.equ	$e80014
+REG_CRTC_R11_TX_SCRL_Y:	  	.equ	$e80016
+REG_CRTC_R12_GR0_SCRL_X:	.equ	$e80018
+REG_CRTC_R13_GR0_SCRL_Y:	.equ	$e8001a
+REG_CRTC_R14_GR1_SCRL_X:	.equ	$e8001c
+REG_CRTC_R15_GR1_SCRL_Y:	.equ	$e8001e
+REG_CRTC_R16_GR2_SCRL_X:	.equ	$e80020
+REG_CRTC_R17_GR2_SCRL_Y:	.equ	$e80022
+REG_CRTC_R18_GR3_SCRL_X:	.equ	$e80024
+REG_CRTC_R19_GR3_SCRL_Y:	.equ	$e80026
+REG_CRTC_R20:	            	.equ	$e80028
+REG_CRTC_R21:	            	.equ	$e8002a
+REG_CRTC_R22:	            	.equ	$e8002c
+REG_CRTC_R23:	            	.equ	$e8002e
+
+GR_PAL_ADDR:                    .equ    $e82000
+TX_PAL_ADDR:                    .equ    $e82200
+SP_PAL_ADDR:                    .equ    $e82220
+
+REG_VC_R0_SCRMOD:               .equ    $e82401	; (ビデオコントローラ)
+REG_VC_R1_HI:                   .equ    $e82500	; (ビデオコントローラ)SP/TX/GR画面優先順位
+REG_VC_R1_LO:                   .equ    $e82501	; (ビデオコントローラ)GP(GR画面プレーン)優先順位
+REG_VC_R2_HI:                   .equ    $e82600	; (ビデオコントローラ)
+REG_VC_R2_LO:                   .equ    $e82601	; (ビデオコントローラ)
+
+REG_DMAC_CSR3:			.equ	$e840c0
+REG_DMAC_CER3:			.equ	$e840c1
+REG_DMAC_DCR3:			.equ	$e840c4
+REG_DMAC_OCR3:			.equ	$e840c5
+REG_DMAC_SCR3:			.equ	$e840c6
+REG_DMAC_CCR3:			.equ	$e840c7
+REG_DMAC_MTC3:			.equ	$e840ca
+REG_DMAC_MAR3:			.equ	$e840cc
+REG_DMAC_DAR3:			.equ	$e840d4
+REG_DMAC_BTC3:			.equ	$e840da
+REG_DMAC_BAR3:			.equ	$e840dc
+REG_DMAC_NIV3:			.equ	$e840e5
+REG_DMAC_EIV3:			.equ	$e840e7
+REG_DMAC_MFC3:			.equ	$e840e9
+REG_DMAC_CPR3:			.equ	$e840ed
+REG_DMAC_DFC3:			.equ	$e840f1
+REG_DMAC_BFC3:			.equ	$e840f9
+
+REG_MFP_GPIP:                   .equ    $e88001	; (GPIP 制御)汎用 I/O レジスタ
+REG_MFP_AER:                    .equ    $e88003	; (GPIP 制御)アクティブエッジレジスタ
+REG_MFP_DDR:                    .equ    $e88005	; (GPIP 制御)データ方向レジスタ
+REG_MFP_IERA:                   .equ    $e88007	; 割り込みイネーブルレジスタ A
+REG_MFP_IERB:                   .equ    $e88009	; 〃			   B
+REG_MFP_IPRA:                   .equ    $e8800b	; 割り込みペンディングレジスタ A
+REG_MFP_IPRB:                   .equ    $e8800d	; 〃			     B
+REG_MFP_ISRA:                   .equ    $e8800f	; 割り込みインサービスレジスタ A
+REG_MFP_ISRB:                   .equ    $e88011	; 〃			     B
+REG_MFP_IMRA:                   .equ    $e88013	; 割り込みマスクレジスタ A
+REG_MFP_IMRB:                   .equ    $e88015	; 〃		       B
+REG_MFP_VR:                     .equ    $e88017	; ベクタレジスタ
+REG_MFP_TACR:                   .equ    $e88019	; (タイマ制御)タイマ A コントロールレジスタ
+REG_MFP_TBCR:                   .equ    $e8801b	; (タイマ制御)タイマ B 〃
+REG_MFP_TCDCR:                  .equ    $e8801d	; (タイマ制御)タイマ C&D コントロールレジスタ
+REG_MFP_TADR:                   .equ    $e8801f	; (タイマ制御)タイマ A データレジスタ
+REG_MFP_TBDR:                   .equ    $e88021	; (タイマ制御)タイマ B 〃
+REG_MFP_TCDR:                   .equ    $e88023	; (タイマ制御)タイマ C 〃
+REG_MFP_TDDR:                   .equ    $e88025	; (タイマ制御)タイマ D 〃
+REG_MFP_SCR:                    .equ    $e88027	; (USART 制御)SYNC キャラクタレジスタ
+REG_MFP_UCR:                    .equ    $e88029	; (USART 制御)USART コントロールレジスタ
+REG_MFP_RSR:                    .equ    $e8802b	; (USART 制御)レシーバステータスレジスタ
+REG_MFP_TSR:                    .equ    $e8802d	; (USART 制御)トランスミッタステータスレジスタ
+REG_MFP_UDR:                    .equ    $e8802f	; (USART 制御)USART データレジスタ
+
+REG_SYSPORT1:                   .equ    $e8e001	; コンピュータ画面コントラスト
+REG_SYSPORT4:                   .equ    $e8e007
+
+REG_OPM_ADR:                    .equ    $e90001
+REG_OPM_DAT:                    .equ    $e90003
+
+OPM_R08_KEY_ON:			.equ	0x08
+OPM_R0F_NE_NFREQ:		.equ	0x0f
+OPM_R10_CLKA_HI:		.equ	0x10
+OPM_R11_CLKA_LO:		.equ	0x11
+OPM_R12_CLKB:			.equ	0x12
+OPM_R14_TIMER_CTRL:		.equ	0x14
+OPM_R18_LFRQ:			.equ	0x18
+OPM_R20_PAN_FL_CON_CH0:		.equ	0x20
+OPM_R28_KC:			.equ	0x28
+OPM_R38_PMS_AMS_CH0:		.equ	0x38
+OPM_R60_TL_OP1_CH0:		.equ	0x60
+OPM_R68_TL_OP3_CH0:		.equ	0x68
+OPM_R70_TL_OP2_CH0:		.equ	0x70
+OPM_R78_TL_OP4_CH0:		.equ	0x78
+OPM_RE0_D1L_RR_OP1_CH0:		.equ	0xE0
+
+REG_ADPCM_CMD:       		.equ	$e92001	; ADPCM [R]ステータス / [W]コマンド
+REG_ADPCM_DAT:       		.equ	$e92003	; データ入出力
+
+REG_SCC_CH_B_CMD:		.equ	$e98001	; チャンネル B コマンドポート
+REG_SCC_CH_B_DAT:		.equ	$e98003	; 〃	     データポート
+REG_SCC_CH_A_CMD:		.equ	$e98005	; チャンネル A コマンドポート
+REG_SCC_CH_A_DAT:		.equ	$e98007	; 〃	     データポート
+
+REG_JOY_1:                      .equ    $e9a001
+REG_JOY_2:                      .equ    $e9a003
+REG_ADPCM_CTRL:      		.equ	$e9a005	; ADPCM サンプルレート/出力制御
+
+REG_MIDI_RGR:        		.equ	$eafa03
+REG_MIDI_ISR:        		.equ	$eafa05
+REG_MIDI_ICR:        		.equ	$eafa07
+REG_MIDI_GRP4:       		.equ	$eafa09
+REG_MIDI_GRP5:       		.equ	$eafa0b
+REG_MIDI_GRP6:       		.equ	$eafa0d
+REG_MIDI_GRP7:       		.equ	$eafa0f
+
+SP_REG_ADDR:                    .equ    $eb0000
+REG_SP0_POSY:                   .equ    $eb0002
+REG_SP0_ATTR:                   .equ    $eb0004
+REG_SP0_PRIO:                   .equ    $eb0006
+REG_SP1_POSX:                   .equ    $eb0008
+REG_SP1_POSY:                   .equ    $eb000a
+REG_SP1_ATTR:                   .equ    $eb000c
+REG_SP1_PRIO:                   .equ    $eb000e
+REG_SP2_POSX:                   .equ    $eb0010
+REG_SP2_POSY:                   .equ    $eb0012
+REG_SP2_ATTR:                   .equ    $eb0014
+REG_SP2_PRIO:                   .equ    $eb0016
+REG_SP3_POSX:                   .equ    $eb0018
+REG_SP3_POSY:                   .equ    $eb001a
+REG_SP3_ATTR:                   .equ    $eb001c
+REG_SP3_PRIO:                   .equ    $eb001e
+REG_SP4_POSX:                   .equ    $eb0020
+REG_SP4_POSY:                   .equ    $eb0022
+REG_SP4_ATTR:                   .equ    $eb0024
+REG_SP4_PRIO:                   .equ    $eb0026
+REG_SP5_POSX:                   .equ    $eb0028
+REG_SP5_POSY:                   .equ    $eb002a
+REG_SP5_ATTR:                   .equ    $eb002c
+REG_SP5_PRIO:                   .equ    $eb002e
+REG_SP6_POSX:                   .equ    $eb0030
+REG_SP6_POSY:                   .equ    $eb0032
+REG_SP6_ATTR:                   .equ    $eb0034
+REG_SP6_PRIO:                   .equ    $eb0036
+REG_SP7_POSX:                   .equ    $eb0038
+REG_SP7_POSY:                   .equ    $eb003a
+REG_SP7_ATTR:                   .equ    $eb003c
+REG_SP7_PRIO:                   .equ    $eb003e
+REG_SP8_POSX:                   .equ    $eb0040
+REG_SP8_POSY:                   .equ    $eb0042
+REG_SP8_ATTR:                   .equ    $eb0044
+REG_SP8_PRIO:                   .equ    $eb0046
+REG_SP9_POSX:                   .equ    $eb0048
+REG_SP9_POSY:                   .equ    $eb004a
+REG_SP9_ATTR:                   .equ    $eb004c
+REG_SP9_PRIO:                   .equ    $eb004e
+REG_SP10_POSX:                  .equ    $eb0050
+REG_SP10_POSY:                  .equ    $eb0052
+REG_SP10_ATTR:                  .equ    $eb0054
+REG_SP10_PRIO:                  .equ    $eb0056
+REG_SP11_POSX:                  .equ    $eb0058
+REG_SP11_POSY:                  .equ    $eb005a
+REG_SP11_ATTR:                  .equ    $eb005c
+REG_SP11_PRIO:                  .equ    $eb005e
+REG_SP12_POSX:                  .equ    $eb0060
+REG_SP12_POSY:                  .equ    $eb0062
+REG_SP12_ATTR:                  .equ    $eb0064
+REG_SP12_PRIO:                  .equ    $eb0066
+REG_SP13_POSX:                  .equ    $eb0068
+REG_SP13_POSY:                  .equ    $eb006a
+REG_SP13_ATTR:                  .equ    $eb006c
+REG_SP13_PRIO:                  .equ    $eb006e
+REG_SP14_POSX:                  .equ    $eb0070
+REG_SP14_POSY:                  .equ    $eb0072
+REG_SP14_ATTR:                  .equ    $eb0074
+REG_SP14_PRIO:                  .equ    $eb0076
+REG_SP15_POSX:                  .equ    $eb0078
+REG_SP15_POSY:                  .equ    $eb007a
+REG_SP15_ATTR:                  .equ    $eb007c
+REG_SP15_PRIO:                  .equ    $eb007e
+REG_SP16_POSX:                  .equ    $eb0080
+REG_SP16_POSY:                  .equ    $eb0082
+REG_SP16_ATTR:                  .equ    $eb0084
+REG_SP16_PRIO:                  .equ    $eb0086
+REG_SP17_POSX:                  .equ    $eb0088
+REG_SP17_POSY:                  .equ    $eb008a
+REG_SP17_ATTR:                  .equ    $eb008c
+REG_SP17_PRIO:                  .equ    $eb008e
+REG_SP18_POSX:                  .equ    $eb0090
+REG_SP18_POSY:                  .equ    $eb0092
+REG_SP18_ATTR:                  .equ    $eb0094
+REG_SP18_PRIO:                  .equ    $eb0096
+REG_SP19_POSX:                  .equ    $eb0098
+REG_SP19_POSY:                  .equ    $eb009a
+REG_SP19_ATTR:                  .equ    $eb009c
+REG_SP19_PRIO:                  .equ    $eb009e
+REG_SP20_POSX:                  .equ    $eb00a0
+REG_SP20_POSY:                  .equ    $eb00a2
+REG_SP20_ATTR:                  .equ    $eb00a4
+REG_SP20_PRIO:                  .equ    $eb00a6
+REG_SP21_POSX:                  .equ    $eb00a8
+REG_SP21_POSY:                  .equ    $eb00aa
+REG_SP21_ATTR:                  .equ    $eb00ac
+REG_SP21_PRIO:                  .equ    $eb00ae
+REG_SP22_POSX:                  .equ    $eb00b0
+REG_SP22_POSY:                  .equ    $eb00b2
+REG_SP22_ATTR:                  .equ    $eb00b4
+REG_SP22_PRIO:                  .equ    $eb00b6
+REG_SP23_POSX:                  .equ    $eb00b8
+REG_SP23_POSY:                  .equ    $eb00ba
+REG_SP23_ATTR:                  .equ    $eb00bc
+REG_SP23_PRIO:                  .equ    $eb00be
+REG_SP24_POSX:                  .equ    $eb00c0
+REG_SP24_POSY:                  .equ    $eb00c2
+REG_SP24_ATTR:                  .equ    $eb00c4
+REG_SP24_PRIO:                  .equ    $eb00c6
+REG_SP25_POSX:                  .equ    $eb00c8
+REG_SP25_POSY:                  .equ    $eb00ca
+REG_SP25_ATTR:                  .equ    $eb00cc
+REG_SP25_PRIO:                  .equ    $eb00ce
+REG_SP26_POSX:                  .equ    $eb00d0
+REG_SP26_POSY:                  .equ    $eb00d2
+REG_SP26_ATTR:                  .equ    $eb00d4
+REG_SP26_PRIO:                  .equ    $eb00d6
+REG_SP27_POSX:                  .equ    $eb00d8
+REG_SP27_POSY:                  .equ    $eb00da
+REG_SP27_ATTR:                  .equ    $eb00dc
+REG_SP27_PRIO:                  .equ    $eb00de
+REG_SP28_POSX:                  .equ    $eb00e0
+REG_SP28_POSY:                  .equ    $eb00e2
+REG_SP28_ATTR:                  .equ    $eb00e4
+REG_SP28_PRIO:                  .equ    $eb00e6
+REG_SP29_POSX:                  .equ    $eb00e8
+REG_SP29_POSY:                  .equ    $eb00ea
+REG_SP29_ATTR:                  .equ    $eb00ec
+REG_SP29_PRIO:                  .equ    $eb00ee
+REG_SP30_POSX:                  .equ    $eb00f0
+REG_SP30_POSY:                  .equ    $eb00f2
+REG_SP30_ATTR:                  .equ    $eb00f4
+REG_SP30_PRIO:                  .equ    $eb00f6
+REG_SP31_POSX:                  .equ    $eb00f8
+REG_SP31_POSY:                  .equ    $eb00fa
+REG_SP31_ATTR:                  .equ    $eb00fc
+REG_SP31_PRIO:                  .equ    $eb00fe
+REG_SP32_POSX:                  .equ    $eb0100
+REG_SP32_POSY:                  .equ    $eb0102
+REG_SP32_ATTR:                  .equ    $eb0104
+REG_SP32_PRIO:                  .equ    $eb0106
+REG_SP33_POSX:                  .equ    $eb0108
+REG_SP33_POSY:                  .equ    $eb010a
+REG_SP33_ATTR:                  .equ    $eb010c
+REG_SP33_PRIO:                  .equ    $eb010e
+REG_SP34_POSX:                  .equ    $eb0110
+REG_SP34_POSY:                  .equ    $eb0112
+REG_SP34_ATTR:                  .equ    $eb0114
+REG_SP34_PRIO:                  .equ    $eb0116
+REG_SP35_POSX:                  .equ    $eb0118
+REG_SP35_POSY:                  .equ    $eb011a
+REG_SP35_ATTR:                  .equ    $eb011c
+REG_SP35_PRIO:                  .equ    $eb011e
+REG_SP36_POSX:                  .equ    $eb0120
+REG_SP36_POSY:                  .equ    $eb0122
+REG_SP36_ATTR:                  .equ    $eb0124
+REG_SP36_PRIO:                  .equ    $eb0126
+REG_SP37_POSX:                  .equ    $eb0128
+REG_SP37_POSY:                  .equ    $eb012a
+REG_SP37_ATTR:                  .equ    $eb012c
+REG_SP37_PRIO:                  .equ    $eb012e
+REG_SP38_POSX:                  .equ    $eb0130
+REG_SP38_POSY:                  .equ    $eb0132
+REG_SP38_ATTR:                  .equ    $eb0134
+REG_SP38_PRIO:                  .equ    $eb0136
+REG_SP39_POSX:                  .equ    $eb0138
+REG_SP39_POSY:                  .equ    $eb013a
+REG_SP39_ATTR:                  .equ    $eb013c
+REG_SP39_PRIO:                  .equ    $eb013e
+REG_SP40_POSX:                  .equ    $eb0140
+REG_SP40_POSY:                  .equ    $eb0142
+REG_SP40_ATTR:                  .equ    $eb0144
+REG_SP40_PRIO:                  .equ    $eb0146
+REG_SP41_POSX:                  .equ    $eb0148
+REG_SP41_POSY:                  .equ    $eb014a
+REG_SP41_ATTR:                  .equ    $eb014c
+REG_SP41_PRIO:                  .equ    $eb014e
+REG_SP42_POSX:                  .equ    $eb0150
+REG_SP42_POSY:                  .equ    $eb0152
+REG_SP42_ATTR:                  .equ    $eb0154
+REG_SP42_PRIO:                  .equ    $eb0156
+REG_SP43_POSX:                  .equ    $eb0158
+REG_SP43_POSY:                  .equ    $eb015a
+REG_SP43_ATTR:                  .equ    $eb015c
+REG_SP43_PRIO:                  .equ    $eb015e
+REG_SP44_POSX:                  .equ    $eb0160
+REG_SP44_POSY:                  .equ    $eb0162
+REG_SP44_ATTR:                  .equ    $eb0164
+REG_SP44_PRIO:                  .equ    $eb0166
+REG_SP45_POSX:                  .equ    $eb0168
+REG_SP45_POSY:                  .equ    $eb016a
+REG_SP45_ATTR:                  .equ    $eb016c
+REG_SP45_PRIO:                  .equ    $eb016e
+REG_SP46_POSX:                  .equ    $eb0170
+REG_SP46_POSY:                  .equ    $eb0172
+REG_SP46_ATTR:                  .equ    $eb0174
+REG_SP46_PRIO:                  .equ    $eb0176
+REG_SP47_POSX:                  .equ    $eb0178
+REG_SP47_POSY:                  .equ    $eb017a
+REG_SP47_ATTR:                  .equ    $eb017c
+REG_SP47_PRIO:                  .equ    $eb017e
+REG_SP48_POSX:                  .equ    $eb0180
+REG_SP48_POSY:                  .equ    $eb0182
+REG_SP48_ATTR:                  .equ    $eb0184
+REG_SP48_PRIO:                  .equ    $eb0186
+REG_SP49_POSX:                  .equ    $eb0188
+REG_SP49_POSY:                  .equ    $eb018a
+REG_SP49_ATTR:                  .equ    $eb018c
+REG_SP49_PRIO:                  .equ    $eb018e
+REG_SP50_POSX:                  .equ    $eb0190
+REG_SP50_POSY:                  .equ    $eb0192
+REG_SP50_ATTR:                  .equ    $eb0194
+REG_SP50_PRIO:                  .equ    $eb0196
+REG_SP51_POSX:                  .equ    $eb0198
+REG_SP51_POSY:                  .equ    $eb019a
+REG_SP51_ATTR:                  .equ    $eb019c
+REG_SP51_PRIO:                  .equ    $eb019e
+REG_SP52_POSX:                  .equ    $eb01a0
+REG_SP52_POSY:                  .equ    $eb01a2
+REG_SP52_ATTR:                  .equ    $eb01a4
+REG_SP52_PRIO:                  .equ    $eb01a6
+REG_SP53_POSX:                  .equ    $eb01a8
+REG_SP53_POSY:                  .equ    $eb01aa
+REG_SP53_ATTR:                  .equ    $eb01ac
+REG_SP53_PRIO:                  .equ    $eb01ae
+REG_SP54_POSX:                  .equ    $eb01b0
+REG_SP54_POSY:                  .equ    $eb01b2
+REG_SP54_ATTR:                  .equ    $eb01b4
+REG_SP54_PRIO:                  .equ    $eb01b6
+REG_SP55_POSX:                  .equ    $eb01b8
+REG_SP55_POSY:                  .equ    $eb01ba
+REG_SP55_ATTR:                  .equ    $eb01bc
+REG_SP55_PRIO:                  .equ    $eb01be
+REG_SP56_POSX:                  .equ    $eb01c0
+REG_SP56_POSY:                  .equ    $eb01c2
+REG_SP56_ATTR:                  .equ    $eb01c4
+REG_SP56_PRIO:                  .equ    $eb01c6
+REG_SP57_POSX:                  .equ    $eb01c8
+REG_SP57_POSY:                  .equ    $eb01ca
+REG_SP57_ATTR:                  .equ    $eb01cc
+REG_SP57_PRIO:                  .equ    $eb01ce
+REG_SP58_POSX:                  .equ    $eb01d0
+REG_SP58_POSY:                  .equ    $eb01d2
+REG_SP58_ATTR:                  .equ    $eb01d4
+REG_SP58_PRIO:                  .equ    $eb01d6
+REG_SP59_POSX:                  .equ    $eb01d8
+REG_SP59_POSY:                  .equ    $eb01da
+REG_SP59_ATTR:                  .equ    $eb01dc
+REG_SP59_PRIO:                  .equ    $eb01de
+REG_SP60_POSX:                  .equ    $eb01e0
+REG_SP60_POSY:                  .equ    $eb01e2
+REG_SP60_ATTR:                  .equ    $eb01e4
+REG_SP60_PRIO:                  .equ    $eb01e6
+REG_SP61_POSX:                  .equ    $eb01e8
+REG_SP61_POSY:                  .equ    $eb01ea
+REG_SP61_ATTR:                  .equ    $eb01ec
+REG_SP61_PRIO:                  .equ    $eb01ee
+REG_SP62_POSX:                  .equ    $eb01f0
+REG_SP62_POSY:                  .equ    $eb01f2
+REG_SP62_ATTR:                  .equ    $eb01f4
+REG_SP62_PRIO:                  .equ    $eb01f6
+REG_SP63_POSX:                  .equ    $eb01f8
+REG_SP63_POSY:                  .equ    $eb01fa
+REG_SP63_ATTR:                  .equ    $eb01fc
+REG_SP63_PRIO:                  .equ    $eb01fe
+REG_SP64_POSX:                  .equ    $eb0200
+REG_SP64_POSY:                  .equ    $eb0202
+REG_SP64_ATTR:                  .equ    $eb0204
+REG_SP64_PRIO:                  .equ    $eb0206
+REG_SP65_POSX:                  .equ    $eb0208
+REG_SP65_POSY:                  .equ    $eb020a
+REG_SP65_ATTR:                  .equ    $eb020c
+REG_SP65_PRIO:                  .equ    $eb020e
+REG_SP66_POSX:                  .equ    $eb0210
+REG_SP66_POSY:                  .equ    $eb0212
+REG_SP66_ATTR:                  .equ    $eb0214
+REG_SP66_PRIO:                  .equ    $eb0216
+REG_SP67_POSX:                  .equ    $eb0218
+REG_SP67_POSY:                  .equ    $eb021a
+REG_SP67_ATTR:                  .equ    $eb021c
+REG_SP67_PRIO:                  .equ    $eb021e
+REG_SP68_POSX:                  .equ    $eb0220
+REG_SP68_POSY:                  .equ    $eb0222
+REG_SP68_ATTR:                  .equ    $eb0224
+REG_SP68_PRIO:                  .equ    $eb0226
+REG_SP69_POSX:                  .equ    $eb0228
+REG_SP69_POSY:                  .equ    $eb022a
+REG_SP69_ATTR:                  .equ    $eb022c
+REG_SP69_PRIO:                  .equ    $eb022e
+REG_SP70_POSX:                  .equ    $eb0230
+REG_SP70_POSY:                  .equ    $eb0232
+REG_SP70_ATTR:                  .equ    $eb0234
+REG_SP70_PRIO:                  .equ    $eb0236
+REG_SP71_POSX:                  .equ    $eb0238
+REG_SP71_POSY:                  .equ    $eb023a
+REG_SP71_ATTR:                  .equ    $eb023c
+REG_SP71_PRIO:                  .equ    $eb023e
+REG_SP72_POSX:                  .equ    $eb0240
+REG_SP72_POSY:                  .equ    $eb0242
+REG_SP72_ATTR:                  .equ    $eb0244
+REG_SP72_PRIO:                  .equ    $eb0246
+REG_SP73_POSX:                  .equ    $eb0248
+REG_SP73_POSY:                  .equ    $eb024a
+REG_SP73_ATTR:                  .equ    $eb024c
+REG_SP73_PRIO:                  .equ    $eb024e
+REG_SP74_POSX:                  .equ    $eb0250
+REG_SP74_POSY:                  .equ    $eb0252
+REG_SP74_ATTR:                  .equ    $eb0254
+REG_SP74_PRIO:                  .equ    $eb0256
+REG_SP75_POSX:                  .equ    $eb0258
+REG_SP75_POSY:                  .equ    $eb025a
+REG_SP75_ATTR:                  .equ    $eb025c
+REG_SP75_PRIO:                  .equ    $eb025e
+REG_SP76_POSX:                  .equ    $eb0260
+REG_SP76_POSY:                  .equ    $eb0262
+REG_SP76_ATTR:                  .equ    $eb0264
+REG_SP76_PRIO:                  .equ    $eb0266
+REG_SP77_POSX:                  .equ    $eb0268
+REG_SP77_POSY:                  .equ    $eb026a
+REG_SP77_ATTR:                  .equ    $eb026c
+REG_SP77_PRIO:                  .equ    $eb026e
+REG_SP78_POSX:                  .equ    $eb0270
+REG_SP78_POSY:                  .equ    $eb0272
+REG_SP78_ATTR:                  .equ    $eb0274
+REG_SP78_PRIO:                  .equ    $eb0276
+REG_SP79_POSX:                  .equ    $eb0278
+REG_SP79_POSY:                  .equ    $eb027a
+REG_SP79_ATTR:                  .equ    $eb027c
+REG_SP79_PRIO:                  .equ    $eb027e
+REG_SP80_POSX:                  .equ    $eb0280
+REG_SP80_POSY:                  .equ    $eb0282
+REG_SP80_ATTR:                  .equ    $eb0284
+REG_SP80_PRIO:                  .equ    $eb0286
+REG_SP81_POSX:                  .equ    $eb0288
+REG_SP81_POSY:                  .equ    $eb028a
+REG_SP81_ATTR:                  .equ    $eb028c
+REG_SP81_PRIO:                  .equ    $eb028e
+REG_SP82_POSX:                  .equ    $eb0290
+REG_SP82_POSY:                  .equ    $eb0292
+REG_SP82_ATTR:                  .equ    $eb0294
+REG_SP82_PRIO:                  .equ    $eb0296
+REG_SP83_POSX:                  .equ    $eb0298
+REG_SP83_POSY:                  .equ    $eb029a
+REG_SP83_ATTR:                  .equ    $eb029c
+REG_SP83_PRIO:                  .equ    $eb029e
+REG_SP84_POSX:                  .equ    $eb02a0
+REG_SP84_POSY:                  .equ    $eb02a2
+REG_SP84_ATTR:                  .equ    $eb02a4
+REG_SP84_PRIO:                  .equ    $eb02a6
+REG_SP85_POSX:                  .equ    $eb02a8
+REG_SP85_POSY:                  .equ    $eb02aa
+REG_SP85_ATTR:                  .equ    $eb02ac
+REG_SP85_PRIO:                  .equ    $eb02ae
+REG_SP86_POSX:                  .equ    $eb02b0
+REG_SP86_POSY:                  .equ    $eb02b2
+REG_SP86_ATTR:                  .equ    $eb02b4
+REG_SP86_PRIO:                  .equ    $eb02b6
+REG_SP87_POSX:                  .equ    $eb02b8
+REG_SP87_POSY:                  .equ    $eb02ba
+REG_SP87_ATTR:                  .equ    $eb02bc
+REG_SP87_PRIO:                  .equ    $eb02be
+REG_SP88_POSX:                  .equ    $eb02c0
+REG_SP88_POSY:                  .equ    $eb02c2
+REG_SP88_ATTR:                  .equ    $eb02c4
+REG_SP88_PRIO:                  .equ    $eb02c6
+REG_SP89_POSX:                  .equ    $eb02c8
+REG_SP89_POSY:                  .equ    $eb02ca
+REG_SP89_ATTR:                  .equ    $eb02cc
+REG_SP89_PRIO:                  .equ    $eb02ce
+REG_SP90_POSX:                  .equ    $eb02d0
+REG_SP90_POSY:                  .equ    $eb02d2
+REG_SP90_ATTR:                  .equ    $eb02d4
+REG_SP90_PRIO:                  .equ    $eb02d6
+REG_SP91_POSX:                  .equ    $eb02d8
+REG_SP91_POSY:                  .equ    $eb02da
+REG_SP91_ATTR:                  .equ    $eb02dc
+REG_SP91_PRIO:                  .equ    $eb02de
+REG_SP92_POSX:                  .equ    $eb02e0
+REG_SP92_POSY:                  .equ    $eb02e2
+REG_SP92_ATTR:                  .equ    $eb02e4
+REG_SP92_PRIO:                  .equ    $eb02e6
+REG_SP93_POSX:                  .equ    $eb02e8
+REG_SP93_POSY:                  .equ    $eb02ea
+REG_SP93_ATTR:                  .equ    $eb02ec
+REG_SP93_PRIO:                  .equ    $eb02ee
+REG_SP94_POSX:                  .equ    $eb02f0
+REG_SP94_POSY:                  .equ    $eb02f2
+REG_SP94_ATTR:                  .equ    $eb02f4
+REG_SP94_PRIO:                  .equ    $eb02f6
+REG_SP95_POSX:                  .equ    $eb02f8
+REG_SP95_POSY:                  .equ    $eb02fa
+REG_SP95_ATTR:                  .equ    $eb02fc
+REG_SP95_PRIO:                  .equ    $eb02fe
+REG_SP96_POSX:                  .equ    $eb0300
+REG_SP96_POSY:                  .equ    $eb0302
+REG_SP96_ATTR:                  .equ    $eb0304
+REG_SP96_PRIO:                  .equ    $eb0306
+REG_SP97_POSX:                  .equ    $eb0308
+REG_SP97_POSY:                  .equ    $eb030a
+REG_SP97_ATTR:                  .equ    $eb030c
+REG_SP97_PRIO:                  .equ    $eb030e
+REG_SP98_POSX:                  .equ    $eb0310
+REG_SP98_POSY:                  .equ    $eb0312
+REG_SP98_ATTR:                  .equ    $eb0314
+REG_SP98_PRIO:                  .equ    $eb0316
+REG_SP99_POSX:                  .equ    $eb0318
+REG_SP99_POSY:                  .equ    $eb031a
+REG_SP99_ATTR:                  .equ    $eb031c
+REG_SP99_PRIO:                  .equ    $eb031e
+REG_SP100_POSX:                 .equ    $eb0320
+REG_SP100_POSY:                 .equ    $eb0322
+REG_SP100_ATTR:                 .equ    $eb0324
+REG_SP100_PRIO:                 .equ    $eb0326
+REG_SP101_POSX:                 .equ    $eb0328
+REG_SP101_POSY:                 .equ    $eb032a
+REG_SP101_ATTR:                 .equ    $eb032c
+REG_SP101_PRIO:                 .equ    $eb032e
+REG_SP102_POSX:                 .equ    $eb0330
+REG_SP102_POSY:                 .equ    $eb0332
+REG_SP102_ATTR:                 .equ    $eb0334
+REG_SP102_PRIO:                 .equ    $eb0336
+REG_SP103_POSX:                 .equ    $eb0338
+REG_SP103_POSY:                 .equ    $eb033a
+REG_SP103_ATTR:                 .equ    $eb033c
+REG_SP103_PRIO:                 .equ    $eb033e
+REG_SP104_POSX:                 .equ    $eb0340
+REG_SP104_POSY:                 .equ    $eb0342
+REG_SP104_ATTR:                 .equ    $eb0344
+REG_SP104_PRIO:                 .equ    $eb0346
+REG_SP105_POSX:                 .equ    $eb0348
+REG_SP105_POSY:                 .equ    $eb034a
+REG_SP105_ATTR:                 .equ    $eb034c
+REG_SP105_PRIO:                 .equ    $eb034e
+REG_SP106_POSX:                 .equ    $eb0350
+REG_SP106_POSY:                 .equ    $eb0352
+REG_SP106_ATTR:                 .equ    $eb0354
+REG_SP106_PRIO:                 .equ    $eb0356
+REG_SP107_POSX:                 .equ    $eb0358
+REG_SP107_POSY:                 .equ    $eb035a
+REG_SP107_ATTR:                 .equ    $eb035c
+REG_SP107_PRIO:                 .equ    $eb035e
+REG_SP108_POSX:                 .equ    $eb0360
+REG_SP108_POSY:                 .equ    $eb0362
+REG_SP108_ATTR:                 .equ    $eb0364
+REG_SP108_PRIO:                 .equ    $eb0366
+REG_SP109_POSX:                 .equ    $eb0368
+REG_SP109_POSY:                 .equ    $eb036a
+REG_SP109_ATTR:                 .equ    $eb036c
+REG_SP109_PRIO:                 .equ    $eb036e
+REG_SP110_POSX:                 .equ    $eb0370
+REG_SP110_POSY:                 .equ    $eb0372
+REG_SP110_ATTR:                 .equ    $eb0374
+REG_SP110_PRIO:                 .equ    $eb0376
+REG_SP111_POSX:                 .equ    $eb0378
+REG_SP111_POSY:                 .equ    $eb037a
+REG_SP111_ATTR:                 .equ    $eb037c
+REG_SP111_PRIO:                 .equ    $eb037e
+REG_SP112_POSX:                 .equ    $eb0380
+REG_SP112_POSY:                 .equ    $eb0382
+REG_SP112_ATTR:                 .equ    $eb0384
+REG_SP112_PRIO:                 .equ    $eb0386
+REG_SP113_POSX:                 .equ    $eb0388
+REG_SP113_POSY:                 .equ    $eb038a
+REG_SP113_ATTR:                 .equ    $eb038c
+REG_SP113_PRIO:                 .equ    $eb038e
+REG_SP114_POSX:                 .equ    $eb0390
+REG_SP114_POSY:                 .equ    $eb0392
+REG_SP114_ATTR:                 .equ    $eb0394
+REG_SP114_PRIO:                 .equ    $eb0396
+REG_SP115_POSX:                 .equ    $eb0398
+REG_SP115_POSY:                 .equ    $eb039a
+REG_SP115_ATTR:                 .equ    $eb039c
+REG_SP115_PRIO:                 .equ    $eb039e
+REG_SP116_POSX:                 .equ    $eb03a0
+REG_SP116_POSY:                 .equ    $eb03a2
+REG_SP116_ATTR:                 .equ    $eb03a4
+REG_SP116_PRIO:                 .equ    $eb03a6
+REG_SP117_POSX:                 .equ    $eb03a8
+REG_SP117_POSY:                 .equ    $eb03aa
+REG_SP117_ATTR:                 .equ    $eb03ac
+REG_SP117_PRIO:                 .equ    $eb03ae
+REG_SP118_POSX:                 .equ    $eb03b0
+REG_SP118_POSY:                 .equ    $eb03b2
+REG_SP118_ATTR:                 .equ    $eb03b4
+REG_SP118_PRIO:                 .equ    $eb03b6
+REG_SP119_POSX:                 .equ    $eb03b8
+REG_SP119_POSY:                 .equ    $eb03ba
+REG_SP119_ATTR:                 .equ    $eb03bc
+REG_SP119_PRIO:                 .equ    $eb03be
+REG_SP120_POSX:                 .equ    $eb03c0
+REG_SP120_POSY:                 .equ    $eb03c2
+REG_SP120_ATTR:                 .equ    $eb03c4
+REG_SP120_PRIO:                 .equ    $eb03c6
+REG_SP121_POSX:                 .equ    $eb03c8
+REG_SP121_POSY:                 .equ    $eb03ca
+REG_SP121_ATTR:                 .equ    $eb03cc
+REG_SP121_PRIO:                 .equ    $eb03ce
+REG_SP122_POSX:                 .equ    $eb03d0
+REG_SP122_POSY:                 .equ    $eb03d2
+REG_SP122_ATTR:                 .equ    $eb03d4
+REG_SP122_PRIO:                 .equ    $eb03d6
+REG_SP123_POSX:                 .equ    $eb03d8
+REG_SP123_POSY:                 .equ    $eb03da
+REG_SP123_ATTR:                 .equ    $eb03dc
+REG_SP123_PRIO:                 .equ    $eb03de
+REG_SP124_POSX:                 .equ    $eb03e0
+REG_SP124_POSY:                 .equ    $eb03e2
+REG_SP124_ATTR:                 .equ    $eb03e4
+REG_SP124_PRIO:                 .equ    $eb03e6
+REG_SP125_POSX:                 .equ    $eb03e8
+REG_SP125_POSY:                 .equ    $eb03ea
+REG_SP125_ATTR:                 .equ    $eb03ec
+REG_SP125_PRIO:                 .equ    $eb03ee
+REG_SP126_POSX:                 .equ    $eb03f0
+REG_SP126_POSY:                 .equ    $eb03f2
+REG_SP126_ATTR:                 .equ    $eb03f4
+REG_SP126_PRIO:                 .equ    $eb03f6
+REG_SP127_POSX:                 .equ    $eb03f8
+REG_SP127_POSY:                 .equ    $eb03fa
+REG_SP127_ATTR:                 .equ    $eb03fc
+REG_SP127_PRIO:                 .equ    $eb03fe
+REG_BG0_SCRL_X:                 .equ    $eb0800
+REG_BG0_SCRL_Y:                 .equ    $eb0802
+REG_BG1_SCRL_X:                 .equ    $eb0804
+REG_BG1_SCRL_Y:                 .equ    $eb0806
+REG_BG_CTRL_HI:                 .equ    $eb0808
+REG_BG_CTRL_LO:                 .equ    $eb0809
+REG_SPBG_H_TOTAL:               .equ    $eb080a
+REG_SPBG_H_DISP:                .equ    $eb080c
+REG_SPBG_V_DISP:                .equ    $eb080e
+REG_SPBG_RESO:                  .equ    $eb0810
+SP_PCG_ADDR:                    .equ    $eb8000
+BG0_TX_ADDR:                    .equ    $ebc000
+BG1_TX_ADDR:                    .equ    $ebe000
+
+;------------------------------------------------------------------------------
+PAL0:		.equ	$0000
+PAL1:		.equ	$0100
+PAL2:		.equ	$0200
+PAL3:		.equ	$0300
+PAL4:		.equ	$0400
+PAL5:		.equ	$0500
+PAL6:		.equ	$0600
+PAL7:		.equ	$0700
+PAL8:		.equ	$0800
+PAL9:		.equ	$0900
+PALA:		.equ	$0a00
+PALB:		.equ	$0b00
+PALC:		.equ	$0c00
+PALD:		.equ	$0d00
+PALE:		.equ	$0e00
+PALF:		.equ	$0f00
+BG_ATR_H:	.equ	$4000
+BG_ATR_V:	.equ	$8000
+BG_ATR_VH:	.equ	$c000
+;------------------------------------------------------------------------------
+jbsr_ne	.macro	_label
+	.local  901
+	beq	901
+	jbsr	_label
+901:
+.endm
+
+jbsr_eq	.macro	_label
+	.local  901
+	bne	901
+	jbsr	_label
+901:
+.endm
+
+jbsr_cc	.macro	_label
+	.local  901
+	bcs	901
+	jbsr	_label
+901:
+.endm
+
+jbsr_cs	.macro	_label
+	.local  901
+	bcc	901
+	jbsr	_label
+901:
+.endm
+
+jbsr_pl	.macro	_label
+	.local  901
+	bmi	901
+	jbsr	_label
+901:
+.endm
+
+jbsr_mi	.macro	_label
+	.local  901
+	bpl	901
+	jbsr	_label
+901:
+.endm
+
+;-------------------------------
+
+rts_ne	.macro
+	.local  901
+	beq	901
+	rts
+901:
+.endm
+
+rts_eq	.macro
+	.local  901
+	bne	901
+	rts
+901:
+.endm
+
+rts_cc	.macro
+	.local  901
+	bcs	901
+	rts
+901:
+.endm
+
+rts_cs	.macro
+	.local  901
+	bcc	901
+	rts
+901:
+.endm
+
+rts_pl	.macro
+	.local  901
+	bmi	901
+	rts
+901:
+.endm
+
+rts_mi	.macro
+	.local  901
+	bpl	901
+	rts
+901:
+.endm
+
+rts_lt	.macro
+	.local  901
+	bge	901
+	rts
+901:
+.endm
+
+rts_gt	.macro
+	.local  901
+	ble	901
+	rts
+901:
+.endm
+;------------------------------------------------------------------------------
+kisen_machi:	.macro
+		.local	VDISP,VDISP2,VDISP3,VDISP4,VDISP5
+   if	dbg01<>0
+		PUSH_L	d0
+		IOCS	_B_SFTSNS
+		btst	#$A,d0			;[ｺｰﾄﾞ]
+		movem.l	(sp)+,d0
+		beq	VDISP5
+		move.w	#%00000_00000_00000_0,TX_PAL_ADDR
+VDISP5:
+		movem.l	d0-d1,-(sp)
+		move.w	#2,d1
+		IOCS	_BITSNS
+		btst	#0,d0			;[TAB]
+		movem.l	(sp)+,d0-d1
+		bne	VDISP3
+   endif
+VDISP:		btst.b	#4,$e88001
+		beq	VDISP
+VDISP2:		btst.b	#4,$e88001
+		bne	VDISP2
+VDISP3:
+   if	dbg01<>0
+		PUSH_L	d0
+		IOCS	_B_SFTSNS
+		btst	#$A,d0			;[ｺｰﾄﾞ]
+		movem.l	(sp)+,d0
+		beq	VDISP4
+		move.w	#%00000_00000_11111_0,TX_PAL_ADDR
+VDISP4:
+   endif
+		.endm
+;------------------------------------------------------------------------------
+; ラスタ割り込みの解除
+CRTCRAS_RMV:	.macro
+		movem.l	d0/a1,-(sp)
+		move.w	SR,-(sp)
+		ori	#$2700,SR	; MPU割り込みﾏｽｸ
+		suba.l	a1,a1
+		IOCS	_CRTCRAS	; RAS割り込み停止
+		move.w	(sp)+,SR
+		movem.l	(sp)+,d0/a1
+		.endm
+;------------------------------------------------------------------------------
+; ＬＥＤ関係
+led_on:		.macro	bit
+		movem.l	d0-d2,-(sp)
+		moveq	bit,d1
+		moveq	#1,d2
+		IOCS	_LEDMOD
+		movem.l	(sp)+,d0-d2
+		.endm
+
+led_off:	.macro	bit
+		movem.l	d0-d2,-(sp)
+		moveq	bit,d1
+		moveq	#0,d2
+		IOCS	_LEDMOD
+		movem.l	(sp)+,d0-d2
+		.endm
+;------------------------------------------------------------------------------
+; 割り込みマスク関係
+ras_int_on:	.macro
+		bset.b	#6,$e88013
+		.endm
+
+ras_int_off:	.macro
+		bclr.b	#6,$e88013
+		.endm
+
+ms_int_on:	.macro
+		bset.b	#5,$e88015
+		.endm
+
+ms_int_off:	.macro
+		bclr.b	#5,$e88015
+		.endm
+
+timer_A_int_on:	.macro
+		bset.b	#5,$e88013
+		.endm
+
+timer_A_int_off:.macro
+		bclr.b	#5,$e88013
+		.endm
+
+opm_int_on:	.macro
+		bset.b	#3,$e88015
+		.endm
+
+opm_int_off:	.macro
+		bclr.b	#3,$e88015
+		.endm
+;------------------------------------------------------------------------------
+; 割り込みマスク関係（version 2）
+ras_ie_on:	.macro
+		.endm
+
+ras_im_on:	.macro
+		.endm
+;------------------------------------------------------------------------------
+; 画面オン／オフ関係
+TEXT_ON:	.macro
+		bset.b	#5,$e82601
+		.endm
+
+TEXT_OFF:	.macro
+		bclr.b	#5,$e82601
+		.endm
+
+SP_ON:		.macro
+		bset.b	#6,$e82601
+		.endm
+
+SP_OFF:		.macro
+		bclr.b	#6,$e82601
+		.endm
+
+BG0_ON:		.macro
+		bset.b	#0,$eb0809
+		.endm
+
+BG0_OFF:	.macro
+		bclr.b	#0,$eb0809
+		.endm
+
+BG1_ON:		.macro
+		bset.b	#3,$eb0809
+		.endm
+
+BG1_OFF:	.macro
+		bclr.b	#3,$eb0809
+		.endm
+
+GR256_OFF_00:	.macro
+		bclr.b	#0,$e82601
+		bclr.b	#1,$e82601
+		.endm
+
+GR256_OFF_01:	.macro
+		bclr.b	#2,$e82601
+		bclr.b	#3,$e82601
+		.endm
+
+GR_ON:		.macro	bit
+		bset.b	bit,$e82601
+		.endm
+
+GR_OFF:		.macro	bit
+		bclr.b	bit,$e82601
+		.endm
+
+GR_ALL_ON:	.macro
+		bset.b	#0,$e82601
+		bset.b	#1,$e82601
+		bset.b	#2,$e82601
+		bset.b	#3,$e82601
+		bset.b	#4,$e82601
+		.endm
+
+GR_ALL_OFF:	.macro
+		bclr.b	#0,$e82601
+		bclr.b	#1,$e82601
+		bclr.b	#2,$e82601
+		bclr.b	#3,$e82601
+		bclr.b	#4,$e82601
+		.endm
+;------------------------------------------------------------------------------
+; 画面ＰＲＷ関係
+SCR_MODE:	.macro	reg
+		move.b	reg,$e80028
+		move.b	reg,$e82401
+		.endm
+
+C16M512:	.equ	%000
+C16M1024:	.equ	%100
+C256M512:	.equ	%001
+C65536M512:	.equ	%011
+
+SCR_PRW_INIT:	.macro
+		move.w	#%00000110_11100100,$e82500
+		.endm
+
+SCR_PRW_SET:	.macro	data
+		move.b	data,$e82500
+		.endm
+
+PRW_GR_TX_SP:	.equ	%00100100
+PRW_TX_SP_GR:	.equ	%00010010
+PRW_TX_GR_SP:	.equ	%00100001
+PRW_SP_GR_TX:	.equ	%00001001
+PRW_SP_TX_GR:	.equ	%00000110
+PRW_GR_SP_TX:	.equ	%00011000
+
+GR_PRW_SET:	.macro	data
+		move.b	data,$e82501
+		.endm
+
+PRW16_SCR0123:	.equ	%11100100
+PRW16_SCR0312:	.equ	%10011100
+
+PRW256_SCR0:	.equ	%11100100
+PRW256_SCR1:	.equ	%01001110
+
+BG_TX_SELECT:	.macro	reg
+		move.w	reg,$eb0808
+		.endm
+
+BG0TX0on_BG1TX1on:	.equ	%0000_0010_0001_1001
+BG0TX0of_BG1TX1of:	.equ	%0000_0010_0001_0000
+BG0TX1on_BG1TX0on:	.equ	%0000_0010_0000_1011
+BG0TX1on_BG1TX0of:	.equ	%0000_0010_0000_0011	;BG16x16MODE
+BG0TX1of_BG1TX0of:	.equ	%0000_0010_0000_0010
+;------------------------------------------------------------------------------
+; 画面スクロール関係
+GR_SCRL_INIT:	.macro
+		clr.l	$e80018
+		clr.l	$e8001c
+		clr.l	$e80020
+		clr.l	$e80024
+		.endm
+
+GR0_SCRL_SET:	.macro	data
+		move.l	data,$e80018
+		.endm
+
+GR1_SCRL_SET:	.macro	data
+		move.l	data,$e8001c
+		.endm
+
+GR2_SCRL_SET:	.macro	data
+		move.l	data,$e80020
+		.endm
+
+GR3_SCRL_SET:	.macro	data
+		move.l	data,$e80024
+		.endm
+
+BG_SCRL_INIT:	.macro
+		clr.l	$eb0800
+		clr.l	$eb0804
+		.endm
+
+BG0_SCRL_SET:	.macro	data
+		move.l	data,BG0_SCRL_REG
+		.endm
+
+BG1_SCRL_SET:	.macro	data
+		move.l	data,BG1_SCRL_REG
+		.endm
+
+TX_SCRL_INIT:	.macro
+		clr.l	TX_SCRL_REG
+		.endm
+
+TX_SCRL_SET:	.macro	data
+		move.l	data,TX_SCRL_REG
+		.endm
+;------------------------------------------------------------------------------
+;	画面半透明関係
+;
+;ﾃｷｽﾄﾍﾞｰｽ,ｸﾞﾗﾌｨｯｸ間
+TEXT_SEET_ON:	.macro
+		bclr.b	#0,$e82600
+		bclr.b	#1,$e82600
+		bset.b	#2,$e82600
+		bset.b	#3,$e82600
+		bset.b	#4,$e82600
+		bset.b	#6,$e82600
+		.endm
+
+TEXT_SEET_OFF:	.macro
+		bclr.b	#0,$e82600
+		bclr.b	#1,$e82600
+		bclr.b	#2,$e82600
+		bclr.b	#3,$e82600
+		bclr.b	#4,$e82600
+		bclr.b	#6,$e82600
+		.endm
+
+;ｸﾞﾗﾌｨｯｸﾍﾞｰｽ,ﾃｷｽﾄ間
+GRTX_SEET_ON:	.macro
+		move.b	#%00011001,$e82600
+		.endm
+
+GRTX_SEET_OFF:	.macro
+		clr.b	$e82600
+		.endm
+
+;ｸﾞﾗﾌｨｯｸﾍﾞｰｽ,ｸﾞﾗﾌｨｯｸ間
+GR_SEET_ON:	.macro
+		move.b	#%00011110,$e82600
+		.endm
+
+GR_SEET_OFF:	.macro
+		clr.b	$e82600
+		.endm
+
+CONTRA_SET:	.macro	data
+		move.b	data,$e8e001
+		.endm
+
+CONTRA_INIT:	.macro
+		move.b	#15,$e8e001
+		.endm
+
+CONTRA_DEC:	.macro
+		move.b	$e8e001,d0
+		subq.b	#1,d0
+		move.b	d0,$e8e001
+		.endm
+
+CONTRA_INC:	.macro
+		move.b	$e8e001,d0
+		addq.b	#1,d0
+		move.b	d0,$e8e001
+		.endm
+;------------------------------------------------------------------------------
+BITSNS:		.macro	n		;IOCS	_BITSNSと同等に機能する
+		move.b	$800+n.w,d0
+		.endm
+
+ABITSNS:	.macro	n,reg		;IOCS	_BITSNSと同等に機能する
+		move.b	$800+n.w,reg
+		.endm
+
+AKEYSNS:	.macro	n,m
+		btst.b	#m,$800+n.w
+		.endm
+
+KEY_MACHI:	.macro	n,m
+		.local	lp
+lp:		btst.b	#m,$800+n.w
+		beq	lp
+		.endm
+
+;
+;	reg.w	< 0なら		reg.w = $ffff
+;		== 0なら	reg.w = 0
+;		> 0なら		reg.w = 1
+;	BASICのSGN()と同じ処理
+;
+sgn_w:		.macro	reg
+		add.w	reg,reg
+		shi	reg
+		negx.b	reg
+		ext.w	reg
+		.endm
+
+lsl_w8:		.macro	reg		;lsl.w	#8,regと同等に機能する
+		move.b	reg,-(sp)
+		move.w	(sp)+,reg
+		.endm
+
+sub2d_w:	.macro	r1,r2,r3
+		.local	PL
+		move.w	r1,r3
+		sub.w	r2,r3
+		bpl	PL
+		neg.w	r3
+PL:
+		.endm
+
+exg2_w:		.macro	r2,r1
+		.local	PL
+		cmp.w	r2,r1
+		bpl	PL
+		exg	r2,r1
+PL:
+		.endm
+;------------------------------------------------------------------------------
+push_l:		.macro	reg
+		move.l	reg,-(sp)
+		.endm
+
+push_w:		.macro	reg
+		move.w	reg,-(sp)
+		.endm
+
+pop_l:		.macro	reg
+		move.l	(sp)+,reg
+		.endm
+
+pop_w:		.macro	reg
+		move.w	(sp)+,reg
+		.endm
+
+push:		.macro	reg
+		movem.l	reg,-(sp)
+		.endm
+
+pop:		.macro	reg
+		movem.l	(sp)+,reg
+		.endm
+;------------------------------------------------------------------------------
+		.list

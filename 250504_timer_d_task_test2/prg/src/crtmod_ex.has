@@ -1,0 +1,92 @@
+	.include x68k_v4.mac
+
+_CRTMOD_192X240_HI_RESO::
+	movem.l	d0-d3/a0-a2,-(sp)
+        lea     ZW_CRTMOD_192X240_HI_RESO(pc),a0
+L0032d8:
+	btst.b	#$04,(REG_MFP_GPIP)
+	beq	L0032d8
+L0032e2:
+	btst.b	#$04,(REG_MFP_GPIP)
+	bne	L0032e2
+	move.w	(a0)+,d0
+	move.b	d0,(REG_SYSPORT4)
+	move.w	(a0)+,d1
+	move.w	(a0)+,d3
+	lea.l	(REG_CRTC_R00),a1
+	lea.l	($0002,a1),a2
+	move.w	($0028,a1),d0
+	move.w	d0,d2
+	move.b	d1,d2
+	and.b	#$13,d0
+	and.b	#$13,d1
+	cmp.b	d0,d1
+	bcc	L003326
+	move.w	d2,($0028,a1)
+	moveq.l	#$07,d0
+L00331c:
+	move.w	(a0)+,(a2)+
+	dbra	d0,L00331c
+	move.w	d3,(a1)
+	bra	L003334
+
+L003326:
+	move.w	d3,(a1)
+	moveq.l	#$07,d0
+L00332a:
+	move.w	(a0)+,(a2)+
+	dbra	d0,L00332a
+	move.w	d2,($0028,a1)
+L003334:
+	lea.l	(REG_SPBG_H_TOTAL),a1
+	move.w	($0002,a0),($0002,a1)
+	move.w	#$00ff,d0
+L003344:
+	dbra	d0,L003344
+	move.w	(a0),(a1)
+	move.w	($0004,a0),($0004,a1)
+	move.w	($0006,a0),($0006,a1)
+	movem.l	(sp)+,d0-d3/a0-a2
+	rts
+
+ZW_CRTMOD_192X240_HI_RESO:
+OFS_X = ((384-192)/8/2)
+OFS_Y = (256-240) ;センタリングするためのオフセット(y)
+	; 192x240
+	.dc.w	$000a,$0011,$0043,$0007
+	.dc.w	$000c+OFS_X,$0024+OFS_X,$0237,$0005
+	.dc.w	$0028+OFS_Y,$0208+OFS_Y,$001b,$00ff
+	.dc.w	$0010+OFS_X,$0028+OFS_Y,$0010
+
+	;REG_SYSPORT4
+	;REG_CRTC_R20 : 表示モード
+	;REG_CRTC_R00 : 水平トータル
+	;REG_CRTC_R01 : 水平同期終了位置
+
+	;REG_CRTC_R02 : 水平表示開始位置
+	;REG_CRTC_R03 : 水平表示終了位置
+	;以上、水平パラメータは8dot単位
+	;REG_CRTC_R04 : 垂直トータル
+	;REG_CRTC_R05 : 垂直同期終了位置
+
+	;REG_CRTC_R06 : 垂直表示開始位置
+	;REG_CRTC_R07 : 垂直表示終了位置
+	;以上、垂直パラメータは1dot単位
+	;REG_CRTC_R08 : 外部同期水平アジャスト
+	;REG_SPBG_H_TOTAL
+
+	;REG_SPBG_H_DISP = R02
+	;REG_SPBG_V_DISP = R06
+	;REG_SPBG_RESO
+.if 0
+	; 256x256
+	.dc.w	$0008,$0010,$002d,$0004
+	.dc.w	$0005,$0026,$0237,$0005
+	.dc.w	$0028,$0228,$001b,$00ff
+	.dc.w	$0009,$0028,$0010
+	; 384x256
+	.dc.w	$000a,$0011,$0043,$0007
+	.dc.w	$000c,$003c,$0237,$0005
+	.dc.w	$0028,$0228,$001b,$00ff
+	.dc.w	$0010,$0028,$0010
+.endif

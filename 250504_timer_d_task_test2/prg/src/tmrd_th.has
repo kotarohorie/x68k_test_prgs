@@ -1,0 +1,92 @@
+	.include x68k_v4.mac
+
+; MFP のレジスタ番号
+AER		= $003  ; アクティブエッジレジスタ
+IERA		= $007  ; 割り込みイネーブルレジスタA 
+IERB		= $009  ; 割り込みイネーブルレジスタB
+ISRA		= $00F  ; 割り込みインサービスレジスタA
+ISRB		= $011  ; 割り込みインサービスレジスタB
+IMRA		= $013  ; 割り込みマスクレジスタA
+IMRB		= $015  ; 割り込みマスクレジスタB
+TCDCR		= $01D  ; タイマーC,Dコントロールレジスタ
+TDDR		= $025  ; タイマーDデータレジスタ
+
+_timerd_thread_init::
+        move.l  sp,(save_sp)
+        lea     timerd_thread_stack_btm,sp
+        move.l  #_timerd_main,-(sp)
+        movem.l d0-d7/a0-a6,-(sp)
+        move.l  sp,(timerd_thread_sp)
+        move.l  (save_sp),sp
+        rts
+
+_timerd_int::
+	movem.l	d0-d7/a0-a6,-(sp)
+        ; タイマーD停止
+        ;- a0 : MFPアドレス
+	movea.l	#$e88000,a0
+	move.b	TCDCR(a0),d0
+	andi.b	#$F0,d0
+	move.b	d0,TCDCR(a0)
+; 割り込み禁止がないと当該関数を rte で抜ける時に既にタイマーDペンディングフラグがセットされ、
+; すぐにもう一回タイマーD割り込みが発生してしまう
+; この事象は XM6 では発生せず XEiJ,Z では発生する
+        ; 割り込み禁止
+	bclr.b	#4,IERB(a0)
+
+        ;sp 保存
+        move.l  sp,(save_sp)
+        move.l  (timerd_thread_sp),sp
+        ;(d)sp から全レジスタ pop
+        movem.l (sp)+,d0-d7/a0-a6
+        rts
+
+_timerd_thread_start::
+        st.b    (b_start)
+        rts
+
+_timerd_thread_sleep::
+        ;(d)sp に全レジスタ push
+        movem.l d0-d7/a0-a6,-(sp)
+        move.l  sp,(timerd_thread_sp)
+        move.l  (save_sp),sp
+        movem.l (sp)+,d0-d7/a0-a6
+        rte
+
+_timerd_thread_wakeup::
+        tst.b    (b_start)
+        bne     @f
+        rts
+@@:
+        tst.b   (b_wakeup)
+        beq     @f
+        rts
+@@:
+	movem.l	d0/a0,-(sp)
+        ; タイマーD開始
+        ;- a0 : MFPアドレス
+	movea.l	#$e88000,a0
+	move.b	#1,TDDR(a0)
+	move.b	TCDCR(a0),d0
+	andi.b	#$F0,d0
+	ori.b	#$01,d0
+	move.b	d0,TCDCR(a0)
+        ; 割り込み許可
+	bset.b	#4,IERB(a0)
+	movem.l	(sp)+,d0/a0
+        rts
+
+        .bss
+        .even
+save_sp:
+        .ds.l   1
+timerd_thread_sp:
+        .ds.l   1
+b_start:
+        .ds.b   1
+b_wakeup:
+        .ds.b   1
+        .even
+timerd_thread_stack_top:
+        .ds.b   2048
+timerd_thread_stack_btm:
