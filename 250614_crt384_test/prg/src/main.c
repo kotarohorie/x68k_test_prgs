@@ -476,4 +476,7 @@ static void termTimerDInterrupt()
 static void crtmod_update()
 {
 	CRTMOD_192X256_TEST(g_add_w8);
+	B_LOCATE(0, 5);
+	int w = 192 + g_add_w8 * 8;
+	printf("…•½•\¦•=%d\n", w);
 }
