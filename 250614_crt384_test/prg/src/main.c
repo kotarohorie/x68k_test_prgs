@@ -57,6 +57,9 @@ static u8 b_xsp_out = FALSE;
 int g_add_w8 = 0;
 #define ADD_W8_MAX	(0x18)
 
+/// @brief BG0,1 の表示状態
+int g_bgdisp_stat = 0;
+
 /*----------------------[ 垂直帰線期間割り込み関数に与える引数 ]----------------------*/
 
 typedef struct {
@@ -81,6 +84,7 @@ void vsync_int2();
 void CRTMOD_192X256_TEST(int add_w8);
 static void main_frame_run();
 static void crtmod_update();
+static void bgmod_update();
 
 void vsync_int(const VSYNC_INT_ARG *arg)
 {
@@ -111,25 +115,23 @@ void main()
 	/* スプライト表示を ON */
 	SP_ON();
 
-	/* BG0 表示 OFF */
-	BGCTRLST(0, 0, 0);
-
-	/* BG1 表示 OFF */
-	BGCTRLST(1, 1, 0);
-
+	GPALET(0, 0x0000);
 	/* グラフィックパレット 1 番を真っ白にする */
 	GPALET(1, 0xFFFF);
+
+	/* カーソル表示 OFF */
+	B_CUROFF();
 
 	/* 簡易説明 */
 	printf(
 		"ジョイスティック、カーソルキーでスプライトを移動できます。\n"
 		"[F10]キーを押すと終了します。\n"
-		"[F8]水平表示幅 -8\n"
-		"[F9]水平表示幅 +8\n"
+		"[F7]水平表示幅 -8\n"
+		"[F8]水平表示幅 +8\n"
+		"[F9]BG0,1の表示状態切替\n"
 	);
 
-	/* カーソル表示 OFF */
-	B_CUROFF();
+	bgmod_update();
 
 	/* 格子模様を描画 */
 	WINDOW(0, 0, 511, 511);
@@ -185,7 +187,9 @@ void main()
 	fclose(fp);
 
 	/* スプライトパレットに転送 */
-	for (i = 0; i < 256; i++) {
+	for (i = 0; i < 256; i++)
+	{
+		if (i < 16) continue;	// 0～15 のパレットは、スプライトパレットに転送しない
 		SPALET((i & 15) | (1 << 0x1F), i / 16, pal_dat[i]);
 	}
 
@@ -210,7 +214,7 @@ void main()
 
 	/* 初期化 */
 	g_player.x	= 192/2 + 8;	/* X 座標初期値 */
-	g_player.y	= 240/2 + 8;	/* Y 座標初期値 */
+	g_player.y	= 160   + 8;	/* Y 座標初期値 */
 	g_player.pt	= 0;			/* スプライトパターン No. */
 	g_player.info	= 0x013F;	/* 反転コード・色・優先度を表すデータ */
 	/* フレームカウント */
@@ -218,6 +222,7 @@ void main()
 
 	timerd_thread_start();
 	// 前回のスイッチ状態を保存
+	// ‐ b1 : [F7]
 	// ‐ b2 : [F8]
 	// - b3 : [F9]
 	int bak_sns = 0;
@@ -227,21 +232,28 @@ void main()
 		// [F10]で終了
 		int sns = BITSNS(0xD);
 		if (sns & 0x10) break;
-		sns &= 0x0c;
+		sns &= 0x0e;
 		int sns2 = ~bak_sns;
 		bak_sns = sns;
 		sns &= sns2;	// 前回と違うスイッチだけを有効にする
-		// [F8]
-		if ((sns & 0x04) && g_add_w8 > 0)
+		// [F7]
+		if ((sns & 0x02) && g_add_w8 > 0)
 		{
 			g_add_w8--;
 			crtmod_update();
 		}
-		// [F9] 
-		else if ((sns & 0x08) && g_add_w8 < ADD_W8_MAX)
+		// [F8] 
+		else if ((sns & 0x04) && g_add_w8 < ADD_W8_MAX)
 		{
 			g_add_w8++;
 			crtmod_update();
+		}
+		// [F9] 
+		else if (sns & 0x08)
+		{
+			g_bgdisp_stat++;
+			if (g_bgdisp_stat > 3) g_bgdisp_stat = 0;	// 0～3 の範囲に収める
+			bgmod_update();
 		}
 	}
 
@@ -476,7 +488,22 @@ static void termTimerDInterrupt()
 static void crtmod_update()
 {
 	CRTMOD_192X256_TEST(g_add_w8);
-	B_LOCATE(0, 5);
+	B_LOCATE(0, 6);
 	int w = 192 + g_add_w8 * 8;
 	printf("水平表示幅=%d\n", w);
+}
+static void bgmod_update()
+{
+	static const char* const sw[2] = {"OFF", "ON "};
+
+	/* BG0 の表示幅を更新 */
+	BGCTRLST(0, 0, g_bgdisp_stat & 1);
+	/* BG1 の表示幅を更新 */
+	BGCTRLST(1, 1, g_bgdisp_stat >> 1);
+
+	B_LOCATE(0, 7);
+	printf("BG0=%s / BG1=%s\n",
+		sw[g_bgdisp_stat & 1],
+		sw[(g_bgdisp_stat >> 1) & 1]
+	);
 }
