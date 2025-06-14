@@ -16,7 +16,9 @@
 #include <iocslib.h>
 #include "../lib/XSP/XSP2lib.H"
 
-#define _USE_TIMERD
+typedef unsigned char u8;
+#define FALSE (0)
+#define TRUE (!0)
 
 /* スプライト PCG パターン最大使用数 */
 #define	PCG_MAX		256
@@ -44,6 +46,17 @@ struct {
 /* フレームカウント */
 short g_frame_count = 0;
 
+/// @brief タイマーDスレッド処理終了フラグ
+volatile static u8 b_term_timerd = FALSE;
+
+/// @brief xsp_out2 を実行したか?
+//- v_int がかかるとクリアされる
+static u8 b_xsp_out = FALSE;
+
+/// @brief 水平表示幅の追加値(8ドット単位) 
+int g_add_w8 = 0;
+#define ADD_W8_MAX	(0x18)
+
 /*----------------------[ 垂直帰線期間割り込み関数に与える引数 ]----------------------*/
 
 typedef struct {
@@ -55,15 +68,19 @@ typedef struct {
 VSYNC_INT_ARG vsync_int_args[NUM_VSYNC_INT_ARGS] = {0};
 VSYNC_INT_ARG* g_arg;
 
-#if defined(_USE_TIMERD)
 static void initTimerDInterrupt();
 static void termTimerDInterrupt();
+void timerd_thread_init();
 void __attribute__((interrupt)) timerd_int(void);
-static void wakeupTimerD();
-#endif
+void timerd_thread_start();
+void timerd_thread_end();
+void timerd_thread_sleep();
+void timerd_thread_wakeup();
 void vsync_int(const VSYNC_INT_ARG *arg);
+void vsync_int2();
 void CRTMOD_192X256_TEST(int add_w8);
 static void main_frame_run();
+static void crtmod_update();
 
 void vsync_int(const VSYNC_INT_ARG *arg)
 {
@@ -71,19 +88,17 @@ void vsync_int(const VSYNC_INT_ARG *arg)
 		/* グラフィクス画面 0 を設定 */
 		SCROLL(0, arg->scroll_x, arg->scroll_y);
 	}
-#if defined(_USE_TIMERD)
-	wakeupTimerD();
-#else
-	main_frame_run();
-#endif
 }
 
+void vsync_int2()
+{
+	timerd_thread_wakeup();
+}
 /*-------------------------------------[ MAIN ]---------------------------------------*/
 void main()
 {
 	int		i;
 	FILE	*fp;
-	int add_w8 = 0;
 
 	/*---------------------[ 画面を初期化 ]---------------------*/
 
@@ -109,6 +124,8 @@ void main()
 	printf(
 		"ジョイスティック、カーソルキーでスプライトを移動できます。\n"
 		"[F10]キーを押すと終了します。\n"
+		"[F8]水平表示幅 -8\n"
+		"[F9]水平表示幅 +8\n"
 	);
 
 	/* カーソル表示 OFF */
@@ -174,7 +191,7 @@ void main()
 
 	// スーパーバイザモードに移行する
 	intptr_t usp = B_SUPER(0);
-	CRTMOD_192X256_TEST(add_w8);
+	crtmod_update();
 
 	/*---------------------[ XSP を初期化 ]---------------------*/
 
@@ -184,13 +201,11 @@ void main()
 	/* PCG データと PCG 配置管理をテーブルを指定 */
 	xsp_pcgdat_set(pcg_dat, pcg_alt, sizeof(pcg_alt));
 
-#if defined(_USE_TIMERD)
 	// タイマーD割り込み開始
 	initTimerDInterrupt();
-#endif
 	/* 垂直帰線期間割り込み開始 */
-	xsp_vsyncint_on(vsync_int);
-
+	xsp_vsyncint_on(vsync_int, vsync_int2);
+	timerd_thread_init();
 	/*===========================[ スティックで操作するデモ ]=============================*/
 
 	/* 初期化 */
@@ -201,9 +216,14 @@ void main()
 	/* フレームカウント */
 	g_frame_count = 0;
 
+	timerd_thread_start();
+	// 前回のスイッチ状態を保存
+	// ‐ b2 : [F8]
+	// - b3 : [F9]
 	int bak_sns = 0;
 	for (;;)
 	{
+		if (b_term_timerd) break;
 		// [F10]で終了
 		int sns = BITSNS(0xD);
 		if (sns & 0x10) break;
@@ -212,25 +232,27 @@ void main()
 		bak_sns = sns;
 		sns &= sns2;	// 前回と違うスイッチだけを有効にする
 		// [F8]
-		if ((sns & 0x04) && add_w8 > 0)
+		if ((sns & 0x04) && g_add_w8 > 0)
 		{
-			add_w8--;
-			CRTMOD_192X256_TEST(add_w8);
+			g_add_w8--;
+			crtmod_update();
 		}
 		// [F9] 
-		else if ((sns & 0x08) && add_w8 < 0x18)
+		else if ((sns & 0x08) && g_add_w8 < ADD_W8_MAX)
 		{
-			add_w8++;
-			CRTMOD_192X256_TEST(add_w8);
+			g_add_w8++;
+			crtmod_update();
 		}
 	}
 
 	/*-----------------------[ 終了処理 ]-----------------------*/
-
-#if defined(_USE_TIMERD)
+	asm volatile (
+		"	ori.w	#$0700,sr\n"
+		"	bsr		_waitForMfp\n"
+	);
+	timerd_thread_end();
 	// タイマーD割り込み終了
 	termTimerDInterrupt();
-#endif
 	/* XSP の終了処理 */
 	xsp_off();
 
@@ -245,55 +267,72 @@ void main()
 		B_SUPER(usp);
 	}
 }
-/**
- * 
- */
-static void main_frame_run()
+void timerd_main(void)
 {
-	static int blink;
-	// -b3 ←
-	// -b4 ↑
-	// -b5 →
-	// -b6 ↓
-	int sns = BITSNS(7);
-
-	int	stk;
-
-	/* 垂直帰線期間割り込み関数の引数 */
-	g_arg = &vsync_int_args[g_frame_count % NUM_VSYNC_INT_ARGS];
-
-	g_arg->scroll_y -= 1;
-
-	/* スティックの入力に合せて移動 */
-	stk = JOYGET(0);
-	if (sns & 0x10) stk &= ~0x01;
-	if (sns & 0x40) stk &= ~0x02;
-	if (sns & 0x08) stk &= ~0x04;
-	if (sns & 0x20) stk &= ~0x08;
-	if ((stk & 1) == 0  &&  g_player.y >  16) g_player.y -= 1;	/* 上に移動 */
-	if ((stk & 2) == 0  &&  g_player.y < 240) g_player.y += 1;	/* 下に移動 */
-	if ((stk & 4) == 0  &&  g_player.x >  16) g_player.x -= 1;	/* 左に移動 */
-	if ((stk & 8) == 0  &&  g_player.x < 192) g_player.x += 1;	/* 右に移動 */
-
-	/* スプライトの表示登録 */
-	xsp_set(g_player.x, g_player.y, g_player.pt, g_player.info);
-	/*
-		↑ここは、
-			xsp_set_st(&g_player);
-		と記述すれば、より高速に実行できる。
-	*/
-	blink++;
-	if (blink & 1)
+	for(;;)
 	{
-		xsp_set(g_player.x+24, g_player.y+24, g_player.pt, g_player.info);
+		static int blink;
+		// -b3 ←
+		// -b4 ↑
+		// -b5 →
+		// -b6 ↓
+		int sns = BITSNS(7);
+
+		int	stk;
+
+		/* 垂直帰線期間割り込み関数の引数 */
+		g_arg = &vsync_int_args[g_frame_count % NUM_VSYNC_INT_ARGS];
+
+		g_arg->scroll_y -= 1;
+
+		/* スティックの入力に合せて移動 */
+		stk = JOYGET(0);
+		if (sns & 0x10) stk &= ~0x01;
+		if (sns & 0x40) stk &= ~0x02;
+		if (sns & 0x08) stk &= ~0x04;
+		if (sns & 0x20) stk &= ~0x08;
+		if ((stk & 1) == 0  &&  g_player.y >  16) g_player.y -= 1;	/* 上に移動 */
+		if ((stk & 2) == 0  &&  g_player.y < 240) g_player.y += 1;	/* 下に移動 */
+		if ((stk & 4) == 0  &&  g_player.x >  16) g_player.x -= 1;	/* 左に移動 */
+		if ((stk & 8) == 0  &&  g_player.x < 192) g_player.x += 1;	/* 右に移動 */
+
+		/* スプライトの表示登録 */
+		xsp_set(g_player.x, g_player.y, g_player.pt, g_player.info);
+		/*
+			↑ここは、
+				xsp_set_st(&g_player);
+			と記述すれば、より高速に実行できる。
+		*/
+		blink++;
+		if (blink & 1)
+		{
+			xsp_set(g_player.x+24, g_player.y+24, g_player.pt, g_player.info);
+		}
+
+		// 1 vsync に複数回 xsp_out2 を実行しないよう対策
+		if (b_xsp_out == FALSE)
+		{
+			/*
+				スプライトを一括表示する。
+				プライト描画に同期して設定するスクロール座標を、
+				垂直帰線期間割り込み関数の引数として渡す。
+			*/
+			xsp_out2(g_arg);
+			b_xsp_out = TRUE;
+		}
+
+		// 次vsyncまでスリープ
+		timerd_thread_sleep();
+		// vsync_int されたら XSP は xsp_out2 の転送を完了したのでフラグをクリアする
+		b_xsp_out = FALSE;
 	}
 
-	/*
-		スプライトを一括表示する。
-		プライト描画に同期して設定するスクロール座標を、
-		垂直帰線期間割り込み関数の引数として渡す。
-	*/
-	xsp_out2(g_arg);
+	// main 終了待ち無限ループ
+	for (;;)
+	{
+		b_term_timerd = TRUE;
+		timerd_thread_sleep();
+	}
 }
 
 /* 割り込み設定の保存用バッファ */
@@ -316,7 +355,6 @@ void waitForMfp()
 		この関数は、何も実行せず return するだけの動作です。
 	*/
 }
-#if defined(_USE_TIMERD)
 static void initTimerDInterrupt()
 {
 	register uint32_t reg_a2 asm ("a2") = (uint32_t)timerd_int;
@@ -434,41 +472,8 @@ static void termTimerDInterrupt()
 					"d0", "a0", "a1"
 	);
 }
-void __attribute__((interrupt)) timerd_int(void)
+/// @brief CRTMOD の設定を更新
+static void crtmod_update()
 {
-	asm volatile (
-		"	movem.l	d0-d7/a0-a6,-(sp)\n"
-		// タイマーD停止
-		"	movea.l	#$e88000,a0\n"					/* a0.l = MFPアドレス */
-		"	move.b	TCDCR(a0),d0\n"
-		"	andi.b	#$F0,d0\n"
-		"	move.b	d0,TCDCR(a0)\n"
-#if 1
-		// 割り込み禁止がないと当該関数を rte で抜ける時に既にタイマーDペンディングフラグがセットされ、
-		// すぐにもう一回タイマーD割り込みが発生してしまい、結果実行は固まってしまう
-		// この事象は 実機,XEiJ,X68000 Z では発生する。 xm6g では発生しない(xm6g では禁止にしなくても固まらない)
-		// 実機検証 @Hau_oli さん
-		"	bclr.b	#4,IERB(a0)\n"					/* 割り込み禁止 */
-#endif
-	);
-	main_frame_run();
-	asm volatile (
-		"	movem.l	(sp)+,d0-d7/a0-a6\n"
-	);
+	CRTMOD_192X256_TEST(g_add_w8);
 }
-static void wakeupTimerD()
-{
-	asm volatile (
-		"	movem.l	d0/a0,-(sp)\n"
-		// タイマーD開始
-		"	movea.l	#$e88000,a0\n"					/* a0.l = MFPアドレス */
-		"	move.b	#1,TDDR(a0)\n"
-		"	move.b	TCDCR(a0),d0\n"
-		"	andi.b	#$F0,d0\n"
-		"	ori.b	#$01,d0\n"
-		"	move.b	d0,TCDCR(a0)\n"
-		"	bset.b	#4,IERB(a0)\n"					/* 割り込み許可 */
-		"	movem.l	(sp)+,d0/a0\n"
-	);
-}
-#endif // defined(_USE_TIMERD)

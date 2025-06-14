@@ -27,7 +27,8 @@ EXECUTABLE = ../out/test.x
 TARGET_FILES = $(EXECUTABLE)
 
 # ヘッダ検索パス
-INCLUDE_FLAGS = -I${XDEV68K_DIR}/include/xc -I${XDEV68K_DIR}/include/xdev68k
+INCLUDE_FLAGS = -I${XDEV68K_DIR}/include/xc -I${XDEV68K_DIR}/include/xdev68k \
+	-I../../include -I../include
 
 
 # コンパイルフラグ
@@ -42,7 +43,9 @@ C_SRCS = main.c
 CPP_SRCS = 
 
 # *.has ソースファイル
-ASM_SRCS = crtmod_ex.has
+ASM_SRCS = \
+	crtmod_ex.has \
+	tmrd_th.has \
 
 # リンク対象のライブラリファイル
 LIBS =\
