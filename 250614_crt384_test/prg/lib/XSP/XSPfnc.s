@@ -446,7 +446,7 @@ xsp_off_rts:
 
 *==========================================================================
 *
-*	void xsp_vsyncint_on(void *proc);
+*	void xsp_vsyncint_on(void *proc, void *proc2);
 *
 *==========================================================================
 
@@ -456,6 +456,9 @@ A7ID	=	4			*   スタック上 return先アドレス  [ 4 byte ]
 					* + 退避レジスタの全バイト数     [ 0 byte ]
 
 	move.l	A7ID+arg1_l(sp),vsyncint_sub
+.if (_Z_VSYNCINT_SUB2)
+	move.l	A7ID+arg2_l(sp),vsyncint_sub2	* 2 個目のサブルーチンアドレス（オプション）
+.endif
 	rts
 
 
@@ -473,6 +476,9 @@ A7ID	=	4			*   スタック上 return先アドレス  [ 4 byte ]
 					* + 退避レジスタの全バイト数     [ 0 byte ]
 
 	move.l	#dummy_proc,vsyncint_sub
+.if (_Z_VSYNCINT_SUB2)
+	move.l	#dummy_proc,vsyncint_sub2
+.endif
 	rts
 
 

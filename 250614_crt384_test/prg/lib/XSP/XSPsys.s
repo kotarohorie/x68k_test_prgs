@@ -1,7 +1,7 @@
 *==========================================================================
 *                      スプライト管理システム XSP
 *==========================================================================
-
+_Z_VSYNCINT_SUB2	= 1		* VSYNC 割り込みサブルーチン2を使用するか？
 
 	.include	doscall.mac
 	.include	iocscall.mac
@@ -449,6 +449,10 @@ VSYNC_RTE:
 	move.b	(a7)+,IMRB(a0)		* IMRB 復活
 	move.b	(a7)+,IMRA(a0)		* IMRA 復活
 
+.if (_Z_VSYNCINT_SUB2)
+	movea.l	vsyncint_sub2(pc),a0
+	jsr	(a0)
+.endif
 	movem.l	(a7)+,d0-d7/a0-a6	* レジスタ復活
 	rte
 

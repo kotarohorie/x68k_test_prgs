@@ -121,7 +121,7 @@ short	xsp_out(void);
 short	xsp_out2(void *vsyncint_arg);
 void	xsp_vertical(short flag);
 
-void	xsp_vsyncint_on(void *proc);
+void	xsp_vsyncint_on(void *proc, void *proc2);
 void	xsp_vsyncint_off(void);
 void	xsp_hsyncint_on(const void *time_chart);
 void	xsp_hsyncint_off(void);

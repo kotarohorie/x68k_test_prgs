@@ -16,6 +16,9 @@ buff_pointer:
 
 *--------------[ ユーザー指定帰線期間割り込み ]
 vsyncint_sub:	dc.l	dummy_proc		* 割り込み処理サブルーチンアドレス（初期値はダミー）
+.if (_Z_VSYNCINT_SUB2)
+vsyncint_sub2:	dc.l	dummy_proc		* 割り込み処理サブルーチン(2)アドレス（初期値はダミー）
+.endif
 
 *--------------[ ラスタ割り込み関係 ]
 hsyncint_sub:	dc.l	dummy_proc		* 割り込み処理サブルーチンアドレス（初期値はダミー）
